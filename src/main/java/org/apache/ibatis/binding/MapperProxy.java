@@ -15,6 +15,9 @@
  */
 package org.apache.ibatis.binding;
 
+import org.apache.ibatis.reflection.ExceptionUtil;
+import org.apache.ibatis.session.SqlSession;
+
 import java.io.Serializable;
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
@@ -26,12 +29,11 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Map;
 
-import org.apache.ibatis.reflection.ExceptionUtil;
-import org.apache.ibatis.session.SqlSession;
-
 /**
  * @author Clinton Begin
  * @author Eduardo Macarron
+ * 
+ * Mapper 代理对象，实际执行逻辑见 {@link MapperProxy#invoke(Object, Method, Object[])}
  */
 public class MapperProxy<T> implements InvocationHandler, Serializable {
 
@@ -79,6 +81,7 @@ public class MapperProxy<T> implements InvocationHandler, Serializable {
   @Override
   public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
     try {
+      // 诸如hashCode()、toString()、equals()等方法，将target指向当前对象this
       if (Object.class.equals(method.getDeclaringClass())) {
         return method.invoke(this, args);
       } else {

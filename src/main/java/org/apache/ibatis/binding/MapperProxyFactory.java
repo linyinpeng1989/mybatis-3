@@ -15,16 +15,18 @@
  */
 package org.apache.ibatis.binding;
 
+import org.apache.ibatis.binding.MapperProxy.MapperMethodInvoker;
+import org.apache.ibatis.session.SqlSession;
+
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import org.apache.ibatis.binding.MapperProxy.MapperMethodInvoker;
-import org.apache.ibatis.session.SqlSession;
-
 /**
  * @author Lasse Voss
+ *
+ * Mapper 代理工厂（支持泛型），用于创建 Mapper 接口对应的代理对象
  */
 public class MapperProxyFactory<T> {
 
@@ -49,7 +51,9 @@ public class MapperProxyFactory<T> {
   }
 
   public T newInstance(SqlSession sqlSession) {
+    // 创建 InvocationHandler 实例，用于执行代理逻辑
     final MapperProxy<T> mapperProxy = new MapperProxy<>(sqlSession, mapperInterface, methodCache);
+    // 创建代理对象并返回
     return newInstance(mapperProxy);
   }
 

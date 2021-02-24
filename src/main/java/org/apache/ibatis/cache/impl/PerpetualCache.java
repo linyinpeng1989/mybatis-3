@@ -15,14 +15,25 @@
  */
 package org.apache.ibatis.cache.impl;
 
+import org.apache.ibatis.cache.Cache;
+import org.apache.ibatis.cache.CacheException;
+import org.apache.ibatis.cache.decorators.BlockingCache;
+import org.apache.ibatis.cache.decorators.LruCache;
+import org.apache.ibatis.cache.decorators.ScheduledCache;
+
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.ibatis.cache.Cache;
-import org.apache.ibatis.cache.CacheException;
-
 /**
  * @author Clinton Begin
+ *
+ * MyBatis 最基础的缓存实现，采用 HashMap 实现
+ * 如果需要支持其他附加功能，可以通过装饰器模式进行扩展。
+ * 比如：
+ *    {@link BlockingCache}
+ *    {@link ScheduledCache}
+ *    {@link LruCache}
+ *    ......
  */
 public class PerpetualCache implements Cache {
 
