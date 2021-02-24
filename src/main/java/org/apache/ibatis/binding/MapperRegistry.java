@@ -30,6 +30,9 @@ import java.util.*;
 public class MapperRegistry {
 
   private final Configuration config;
+  /**
+   * 接口类型及相应工厂类映射
+   */
   private final Map<Class<?>, MapperProxyFactory<?>> knownMappers = new HashMap<>();
 
   public MapperRegistry(Configuration config) {
@@ -66,6 +69,7 @@ public class MapperRegistry {
         // It's important that the type is added before the parser is run
         // otherwise the binding may automatically be attempted by the
         // mapper parser. If the type is already known, it won't try.
+        // 解析 Mapper 接口及其方法上的相关注解
         MapperAnnotationBuilder parser = new MapperAnnotationBuilder(config, type);
         parser.parse();
         loadCompleted = true;
