@@ -51,7 +51,7 @@ public class MapperProxyFactory<T> {
   }
 
   public T newInstance(SqlSession sqlSession) {
-    // 创建 InvocationHandler 实例，用于执行代理逻辑
+    // 创建 InvocationHandler 实例（触发管理类，执行代理增强逻辑）
     final MapperProxy<T> mapperProxy = new MapperProxy<>(sqlSession, mapperInterface, methodCache);
     // 创建代理对象并返回
     return newInstance(mapperProxy);

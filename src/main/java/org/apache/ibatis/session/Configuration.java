@@ -598,9 +598,11 @@ public class Configuration {
     } else {
       executor = new SimpleExecutor(this, transaction);
     }
+    // 二级缓存开关，若 cacheEnabled 为 true 则使用 CachingExecutor 进行封装（装饰器）
     if (cacheEnabled) {
       executor = new CachingExecutor(executor);
     }
+    // 织入插件的逻辑
     executor = (Executor) interceptorChain.pluginAll(executor);
     return executor;
   }

@@ -46,7 +46,13 @@ import java.util.Optional;
  */
 public class MapperMethod {
 
+  /**
+   * 包含 statement id （例如：com.gupaoedu.mapper.BlogMapper.selectBlogById） 和 SQL 类型
+   */
   private final SqlCommand command;
+  /**
+   * 方法签名，主要是返回值的类型
+   */
   private final MethodSignature method;
 
   public MapperMethod(Class<?> mapperInterface, Method method, Configuration config) {

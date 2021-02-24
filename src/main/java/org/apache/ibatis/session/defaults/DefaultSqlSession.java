@@ -39,6 +39,8 @@ import java.util.*;
  * The default implementation for {@link SqlSession}.
  * Note that this class is not Thread-Safe.
  *
+ * 线程不安全
+ *
  * @author Clinton Begin
  */
 public class DefaultSqlSession implements SqlSession {
@@ -139,7 +141,10 @@ public class DefaultSqlSession implements SqlSession {
   @Override
   public <E> List<E> selectList(String statement, Object parameter, RowBounds rowBounds) {
     try {
+      // 获取 statement（例如：com.gupaoedu.mapper.BlogMapper.selectBlogById） 对应的 MappedStatement 对象
       MappedStatement ms = configuration.getMappedStatement(statement);
+
+      // 装饰器模式：如果配置了插件，则先执行插件相关逻辑；如果配置了二级缓存，再执行 CacheExecutor 逻辑；最后执行 SQL 逻辑
       return executor.query(ms, wrapCollection(parameter), rowBounds, Executor.NO_RESULT_HANDLER);
     } catch (Exception e) {
       throw ExceptionFactory.wrapException("Error querying database.  Cause: " + e, e);

@@ -33,7 +33,7 @@ import java.util.Map;
  * @author Clinton Begin
  * @author Eduardo Macarron
  *
- * Mapper 代理对象，实际执行逻辑见 {@link MapperProxy#invoke(Object, Method, Object[])}
+ * 代理触发管理类，实际执行逻辑见 {@link MapperProxy#invoke(Object, Method, Object[])}
  */
 public class MapperProxy<T> implements InvocationHandler, Serializable {
 
@@ -81,11 +81,11 @@ public class MapperProxy<T> implements InvocationHandler, Serializable {
   @Override
   public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
     try {
-      // 诸如 hashCode()、toString()、equals()等 Object 类的方法，将 target 指向当前对象 this，进行反射调用
+      // 诸如 hashCode()、toString()、equals()等 Object 类的方法，则直接执行
       if (Object.class.equals(method.getDeclaringClass())) {
         return method.invoke(this, args);
       }
-      // 其他 Mapper 接口相关的方法
+      // 其他 Mapper 接口相关的方法，由 PlainMethodInvoker 进行处理
       else {
         return cachedInvoker(proxy, method, args).invoke(proxy, method, args, sqlSession);
       }
@@ -94,6 +94,15 @@ public class MapperProxy<T> implements InvocationHandler, Serializable {
     }
   }
 
+  /**
+   * 获取 method 对应的 MapperMethodInvoker（缓存映射关系，提升 MapperMethodInvoker 获取效率）
+   *
+   * @param proxy
+   * @param method
+   * @param args
+   * @return
+   * @throws Throwable
+   */
   private MapperMethodInvoker cachedInvoker(Object proxy, Method method, Object[] args) throws Throwable {
     try {
       return methodCache.computeIfAbsent(method, m -> {
@@ -149,7 +158,7 @@ public class MapperProxy<T> implements InvocationHandler, Serializable {
 
     @Override
     public Object invoke(Object proxy, Method method, Object[] args, SqlSession sqlSession) throws Throwable {
-      // 执行 Mapper 对应接口相关的 SQL
+      // 执行 Mapper 对应接口相关的 SQL（SQL 语句执行的起点）
       return mapperMethod.execute(sqlSession, args);
     }
   }
