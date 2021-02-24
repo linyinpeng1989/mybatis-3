@@ -32,7 +32,7 @@ import java.util.Map;
 /**
  * @author Clinton Begin
  * @author Eduardo Macarron
- * 
+ *
  * Mapper 代理对象，实际执行逻辑见 {@link MapperProxy#invoke(Object, Method, Object[])}
  */
 public class MapperProxy<T> implements InvocationHandler, Serializable {
@@ -81,10 +81,12 @@ public class MapperProxy<T> implements InvocationHandler, Serializable {
   @Override
   public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
     try {
-      // 诸如hashCode()、toString()、equals()等方法，将target指向当前对象this
+      // 诸如 hashCode()、toString()、equals()等 Object 类的方法，将 target 指向当前对象 this，进行反射调用
       if (Object.class.equals(method.getDeclaringClass())) {
         return method.invoke(this, args);
-      } else {
+      }
+      // 其他 Mapper 接口相关的方法
+      else {
         return cachedInvoker(proxy, method, args).invoke(proxy, method, args, sqlSession);
       }
     } catch (Throwable t) {
@@ -95,6 +97,7 @@ public class MapperProxy<T> implements InvocationHandler, Serializable {
   private MapperMethodInvoker cachedInvoker(Object proxy, Method method, Object[] args) throws Throwable {
     try {
       return methodCache.computeIfAbsent(method, m -> {
+        // 如果是接口默认方法，则创建 DefaultMethodInvoker 执行器
         if (m.isDefault()) {
           try {
             if (privateLookupInMethod == null) {
@@ -106,7 +109,9 @@ public class MapperProxy<T> implements InvocationHandler, Serializable {
               | NoSuchMethodException e) {
             throw new RuntimeException(e);
           }
-        } else {
+        }
+        // 如果不是接口默认方法（即正常的 Mapper 接口相关方法）
+        else {
           return new PlainMethodInvoker(new MapperMethod(mapperInterface, method, sqlSession.getConfiguration()));
         }
       });
@@ -144,6 +149,7 @@ public class MapperProxy<T> implements InvocationHandler, Serializable {
 
     @Override
     public Object invoke(Object proxy, Method method, Object[] args, SqlSession sqlSession) throws Throwable {
+      // 执行 Mapper 对应接口相关的 SQL
       return mapperMethod.execute(sqlSession, args);
     }
   }
