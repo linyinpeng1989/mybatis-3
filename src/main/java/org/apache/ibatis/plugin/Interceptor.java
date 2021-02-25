@@ -15,6 +15,11 @@
  */
 package org.apache.ibatis.plugin;
 
+import org.apache.ibatis.executor.Executor;
+import org.apache.ibatis.executor.parameter.ParameterHandler;
+import org.apache.ibatis.executor.statement.StatementHandler;
+import org.apache.ibatis.session.ResultHandler;
+
 import java.util.Properties;
 
 /**
@@ -24,6 +29,18 @@ public interface Interceptor {
 
   Object intercept(Invocation invocation) throws Throwable;
 
+  /**
+   * 为目标对象织入拦截器逻辑
+   * <p>
+   * 仅支持以下四类对象：
+   * * @see {@link Executor}
+   * * @see {@link ParameterHandler}
+   * * @see {@link ResultHandler}
+   * * @see {@link StatementHandler}
+   *
+   * @param target 目标对象
+   * @return
+   */
   default Object plugin(Object target) {
     return Plugin.wrap(target, this);
   }

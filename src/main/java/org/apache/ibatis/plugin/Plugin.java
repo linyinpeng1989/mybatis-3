@@ -15,6 +15,8 @@
  */
 package org.apache.ibatis.plugin;
 
+import org.apache.ibatis.reflection.ExceptionUtil;
+
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
@@ -23,10 +25,10 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.ibatis.reflection.ExceptionUtil;
-
 /**
  * @author Clinton Begin
+ *
+ * MyBatis 插件实际上都是实现了 InvocationHandler 接口的触发管理类，通过代理实现拦截器逻辑织入
  */
 public class Plugin implements InvocationHandler {
 
@@ -45,6 +47,7 @@ public class Plugin implements InvocationHandler {
     Class<?> type = target.getClass();
     Class<?>[] interfaces = getAllInterfaces(type, signatureMap);
     if (interfaces.length > 0) {
+      // 创建目标对象的代理，织入拦截器逻辑
       return Proxy.newProxyInstance(
           type.getClassLoader(),
           interfaces,
@@ -56,8 +59,10 @@ public class Plugin implements InvocationHandler {
   @Override
   public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
     try {
+      // 判断当前方法是否需要进行拦截处理
       Set<Method> methods = signatureMap.get(method.getDeclaringClass());
       if (methods != null && methods.contains(method)) {
+        // 织入拦截器逻辑
         return interceptor.intercept(new Invocation(target, method, args));
       }
       return method.invoke(target, args);

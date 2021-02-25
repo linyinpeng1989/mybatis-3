@@ -124,6 +124,7 @@ public class XMLMapperBuilder extends BaseBuilder {
       // 创建用于解析增删改查标签的 XMLStatementBuilder
       final XMLStatementBuilder statementParser = new XMLStatementBuilder(configuration, builderAssistant, context, requiredDatabaseId);
       try {
+        // 将 SQL 语句解析成 MappedStatement 对象并缓存
         statementParser.parseStatementNode();
       } catch (IncompleteElementException e) {
         configuration.addIncompleteStatement(statementParser);
@@ -424,6 +425,8 @@ public class XMLMapperBuilder extends BaseBuilder {
           // to prevent loading again this resource from the mapper interface
           // look at MapperAnnotationBuilder#loadXmlResource
           configuration.addLoadedResource("namespace:" + namespace);
+
+          // 将接口与 MapperProxyFactory 关联起来
           configuration.addMapper(boundType);
         }
       }
