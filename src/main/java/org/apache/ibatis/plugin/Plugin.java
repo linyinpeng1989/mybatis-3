@@ -28,7 +28,7 @@ import java.util.Set;
 /**
  * @author Clinton Begin
  *
- * MyBatis 插件实际上都是实现了 InvocationHandler 接口的触发管理类，通过代理实现拦截器逻辑织入
+ * MyBatis Plugin 实现了 InvocationHandler 接口（触发管理类），通过代理实现拦截器逻辑织入（Interceptor）
  */
 public class Plugin implements InvocationHandler {
 
@@ -59,7 +59,7 @@ public class Plugin implements InvocationHandler {
   @Override
   public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
     try {
-      // 判断当前方法是否需要进行拦截处理
+      // 获取被代理对象的方法集合，判断当前方法是否需要进行拦截处理
       Set<Method> methods = signatureMap.get(method.getDeclaringClass());
       if (methods != null && methods.contains(method)) {
         // 织入拦截器逻辑

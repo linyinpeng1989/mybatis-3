@@ -20,6 +20,8 @@ import java.lang.reflect.Method;
 
 /**
  * @author Clinton Begin
+ *
+ * 对被代理对象的封装（可能是原对象，也可能是经过代理后的代理对象）
  */
 public class Invocation {
 

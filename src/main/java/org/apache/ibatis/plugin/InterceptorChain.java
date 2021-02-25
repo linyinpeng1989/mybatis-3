@@ -44,6 +44,7 @@ public class InterceptorChain {
    * @return
    */
   public Object pluginAll(Object target) {
+    // 一层层逐步代理：target 可能是原目标对象，也可能是被代理过的代理对象
     for (Interceptor interceptor : interceptors) {
       target = interceptor.plugin(target);
     }
